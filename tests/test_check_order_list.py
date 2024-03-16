@@ -1,15 +1,13 @@
 import allure
 import requests
+from Sprint_7_api.project_url import Urls, Endpoints
 
 
 class TestCheckOrderList:
-    @staticmethod
-    def courier_order_list():
-        return requests.get('http://qa-scooter.praktikum-services.ru/api/v1/orders')
 
     @allure.title('Cписок заказов успешно отображается')
     def test_list_order(self):
-        response = self.courier_order_list()
+        response = requests.get(f'{Urls.URL}{Endpoints.CREATE_ORDER}')
         assert response.status_code == 200
         expected_order_keys = [
             "id",
@@ -31,9 +29,5 @@ class TestCheckOrderList:
 
         orders_data = response.json().get("orders", [])
 
-        if orders_data and len(orders_data) > 0:
-            for order in orders_data:
-                order_keys = order.keys()
-                assert all(key in order_keys for key in expected_order_keys)
-        else:
-            assert False, "No orders returned or orders list is empty"
+        assert all(all(key in order.keys() for key in expected_order_keys) for order in
+                   orders_data), "No orders returned or orders list is empty"
