@@ -2,13 +2,10 @@
 import allure
 import pytest
 import requests
+from Sprint_7_api.project_url import Urls, Endpoints
 
 
 class TestCreateOrder:
-
-    @staticmethod
-    def request_order(order_data):
-        return requests.post('http://qa-scooter.praktikum-services.ru/api/v1/orders', json=order_data)
 
     @pytest.mark.parametrize("color", ["BLACK", "GREY", "BLACK, GREY", "RED", " ", None])
     @allure.title('Создание заказа в разрезе цвета')
@@ -27,5 +24,5 @@ class TestCreateOrder:
             ]
         }
 
-        response = self.request_order(order_data)
+        response = requests.post(f'{Urls.URL}{Endpoints.CREATE_ORDER}', json=order_data)
         assert response.status_code == 201 and 'track' in response.text
